@@ -7,8 +7,6 @@ numpy
 scikit-learn
 nltk
 psutil
-time
-re
 beautifulsoup4
 
 # TensorFlow / Keras (for the BiLSTM)
@@ -17,6 +15,7 @@ keras
 
 # Used for HTML preprocessing and text cleaning
 bs4
+
 
 
 
