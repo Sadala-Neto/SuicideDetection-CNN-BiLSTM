@@ -335,7 +335,6 @@ def avaliar_modelo(model, X, X_text, y, nome_conjunto="Teste"):
     print(f"Acurácia:   {resultados[1]:.4f}")
     print(f"Precisão:   {resultados[2]:.4f}")
     print(f"Revocação:  {resultados[3]:.4f}")
-    print(f"AUC:        {resultados[4]:.4f}")
 
     # Predição
     y_probs = model.predict(X).flatten()
@@ -421,3 +420,4 @@ print("Fim da Analise usando a RNA")
 print("====================================")
 
 # endregion
+
