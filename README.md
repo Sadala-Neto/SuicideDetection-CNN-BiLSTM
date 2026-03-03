@@ -23,50 +23,50 @@ A hybrid **CNN + BiLSTM** architecture was used, achieving competitive results.
 
 ### 1️⃣ Install Dependencies
 
-> Make sure all required libraries are installed:
+Make sure all required libraries are installed:
 
-bash
-pip install -r requirements.txt
+> bash
+> - pip install -r requirements.txt
 
 ### 2️⃣ Download the Dataset
 
-> The dataset is not included in this repository.
+The dataset is not included in this repository.
 
-Please follow the instructions in the data/README.md file to download it from Kaggle and place the CSV file in the correct directory.
+> ⚠️ Please follow the instructions in the data/README.md file to download it from Kaggle and place the CSV file in the correct directory.
 
 ### 3️⃣ Configure the Dataset Path
 
-> Verify that the dataset path inside main.py matches your folder structure.
-Example:
-df_suicide_data = pd.read_csv("data/Suicide_Detection.csv")
+Verify that the dataset path inside main.py matches your folder structure.
+> Example:
+> - df_suicide_data = pd.read_csv("data/Suicide_Detection.csv")
 
 ### 4️⃣ Choose Preprocessing Version
 
-> Inside main.py, you can select whether to use stopwords removal:
+Inside main.py, you can select whether to use stopwords removal:
 
 > Keep the stopwords removal line active → WITHOUT stopwords
 
 > Comment the line → WITH stopwords
 
-> Also adjust the sequence length accordingly:
-max_len = 160  # Use 320 when running WITH stopwords
+Also adjust the sequence length accordingly:
+>  max_len = 160  # Use 320 when running WITH stopwords
 
 ### 5️⃣ Run the Experiment
 
-> Execute the script:
-python main.py
+Execute the script:
+> python main.py
 
 > The script will automatically:
 
-  🟢 Train the CNN–BiLSTM model
+  > Train the CNN–BiLSTM model
 
-  🟢 Display training and validation curves
+  > Display training and validation curves
 
-  🟢 Generate the confusion matrix and ROC curve
+  > Generate the confusion matrix and ROC curve
 
-  🟢 Report Accuracy, Precision, Recall, and F1-score
+  > Report Accuracy, Precision, Recall, and F1-score
 
-  🟢 Measure training time and memory usage
+  > Measure training time and memory usage
 
 ---
 
@@ -89,6 +89,7 @@ Any use in production must undergo an **ethical review** and involve **mental he
 ## 📄 License
 
 This project is licensed under the MIT License.  
+
 
 
 
