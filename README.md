@@ -48,6 +48,8 @@ Inside main.py, you can select whether to use stopwords removal:
 
 > Comment the line → WITH stopwords
 
+> - text = ' '.join(word for word in text.split() if word not in stop_words)
+
 Also adjust the sequence length accordingly:
 >  max_len = 160  # Use 320 when running WITH stopwords
 
@@ -89,6 +91,7 @@ Any use in production must undergo an **ethical review** and involve **mental he
 ## 📄 License
 
 This project is licensed under the MIT License.  
+
 
 
 
