@@ -56,7 +56,7 @@ Also adjust the sequence length accordingly:
 Execute the script:
 > python main.py
 
-> The script will automatically:
+The script will automatically:
 
   > Train the CNN–BiLSTM model
 
@@ -89,6 +89,7 @@ Any use in production must undergo an **ethical review** and involve **mental he
 ## 📄 License
 
 This project is licensed under the MIT License.  
+
 
 
 
