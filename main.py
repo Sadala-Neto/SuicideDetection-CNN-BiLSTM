@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import re
 import nltk
+import time
+import psutil
+import matplotlib.pyplot as plt
 
 
 from sklearn.metrics import confusion_matrix, classification_report, f1_score,roc_curve, auc, precision_recall_curve
@@ -17,6 +20,7 @@ from tensorflow.keras.layers import Embedding, LSTM, Dense, Conv1D, Dropout, Inp
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras import regularizers
 from keras.optimizers import Adam
+
 
 nltk.download('punkt')
 nltk.download('wordnet')
@@ -75,11 +79,11 @@ df_class_0 = df_suicide_data[df_suicide_data['feeling'] == 0]  # non-suicide
 df_class_1 = df_suicide_data[df_suicide_data['feeling'] == 1]  # suicide
 
 # Encontra o tamanho da menor classe para balanceamento
-min_class_size = min(len(df_class_0), len(df_class_1))
+min_class_size = 10000 #min(len(df_class_0), len(df_class_1))
 
 # Reduz o número de amostras das classes para o tamanho da menor
-df_class_0_balanced = df_class_0.sample(n=min_class_size, random_state=42)
-df_class_1_balanced = df_class_1.sample(n=min_class_size, random_state=42)
+df_class_0_balanced = df_class_0.sample(n=min_class_size, random_state=42) #n=min_class_size
+df_class_1_balanced = df_class_1.sample(n=min_class_size, random_state=42) #n=min_class_size
 
 # Concatena as classes balanceadas e embaralha o dataset final
 df_balanced = pd.concat([df_class_0_balanced, df_class_1_balanced]).sample(frac=1, random_state=42).reset_index(drop=True)
@@ -131,6 +135,9 @@ def preprocess_text(text):
     return text
 
 df_suicide_data['text'] = df_suicide_data['text'].apply(preprocess_text)
+# Cópia dos textos pré-processados para análise qualitativa
+texts_clean = df_suicide_data['text'].values
+
 print("\nDataFrame após pré-processamento de texto:")
 print(df_suicide_data.head())
 
@@ -144,7 +151,8 @@ val_size_final = 0.25 / (1 - test_size_final) * test_size_final # 0.25 * 0.8 = 0
 val_size_from_train = 0.25
 
 # Dados para divisão
-X = df_suicide_data['text'].values
+X_text = df_suicide_data['text'].values  # texto legível
+X = X_text.copy()                        # usado para tokenização
 y = df_suicide_data['feeling'].values
 le = LabelEncoder()
 y = le.fit_transform(y)
@@ -153,6 +161,10 @@ y = le.fit_transform(y)
 X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=test_size_final, random_state=5, stratify=y)
 # Segunda divisão: do restante (X_temp, y_temp), separa Validação (25% dele, que é 20% do total) e Treino (75% dele)
 X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=val_size_from_train, random_state=37, stratify=y_temp)
+
+# Divisão dos textos legíveis para análise qualitativa
+X_text_temp, X_text_test, y_temp, y_test = train_test_split(X_text, y, test_size=test_size_final, random_state=5, stratify=y)
+X_text_train, X_text_val, y_train, y_val = train_test_split(X_text_temp, y_temp, test_size=val_size_from_train, random_state=37, stratify=y_temp)
 
 print(f"\nNúmero de amostras no conjunto de Treino: {len(X_train)}")
 print(f"Número de amostras no conjunto de Validação: {len(X_val)}")
@@ -206,7 +218,7 @@ print("====================================")
 #criação do modelo
 model = Sequential()
 model.add(Input(shape=(max_len,)))
-model.add(Embedding(vocab_size, 100)) 
+model.add(Embedding(vocab_size, 100))
 model.add(Dropout(0.3))
 model.add(Conv1D(32, 5, activation='relu', padding='same'))
 model.add(MaxPooling1D(pool_size=2))
@@ -237,9 +249,86 @@ callbacks_list = [early_stopping_loss, reduce_lr]
 
 #Treinamento do modelo
 print("Inicio do treinamento")
-rna = model.fit(X_train, y_train, epochs=25, batch_size=1000, validation_data=(X_val, y_val), callbacks=callbacks_list, class_weight=class_weights) 
 
-def avaliar_modelo(model, X, y, nome_conjunto="Teste"):
+# ===============================
+# Inicio da medição de tempo e memória (antes do treino)
+# ===============================
+process = psutil.Process()
+mem_before = process.memory_info().rss / (1024 ** 2)  # MB
+start_time = time.time()
+
+rna = model.fit(X_train, y_train, epochs=25, batch_size=1000, validation_data=(X_val, y_val), callbacks=callbacks_list, class_weight=class_weights)
+
+# ===============================
+# Final da medição de tempo e memória (após o treino)
+# ===============================
+
+end_time = time.time()
+mem_after = process.memory_info().rss / (1024 ** 2)  # MB
+
+training_time = end_time - start_time
+memory_used = mem_after - mem_before
+
+print(f"\n⏱ Tempo total de treino: {training_time:.2f} segundos")
+print(f"🧠 Consumo aproximado de memória: {memory_used:.2f} MB")
+
+# ===============================
+# Curva de treino vs validação (acuracia)
+# ===============================
+plt.figure(figsize=(7, 4), dpi=300)
+plt.plot(rna.history['accuracy'], label='Training')
+plt.plot(rna.history['val_accuracy'], label='Validation')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.title('Accuracy Curve - Training vs Validation')
+plt.grid(True, linestyle=':', alpha=0.6)
+plt.tight_layout()
+plt.show()
+
+# ===============================
+# Curva de treino vs validação (loss)
+# ===============================
+plt.figure(figsize=(7, 4), dpi=300)
+plt.plot(rna.history['loss'], label='Training')
+plt.plot(rna.history['val_loss'], label='Validation')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.title('Loss Curve - Training vs Validation')
+plt.grid(True, linestyle=':', alpha=0.6)
+plt.tight_layout()
+plt.show()
+
+# ===============================
+# Grafico da Matriz de confusão
+# ===============================
+
+def plotar_matriz_confusao(cm, nome_conjunto):
+    plt.figure(figsize=(7, 4), dpi=300)
+    plt.imshow(cm, cmap='Blues')
+    plt.title(f'Confusion Matrix - {nome_conjunto}')
+    plt.colorbar()
+    plt.xlabel('Predicted Class')
+    plt.ylabel('Correct Class')
+
+    # Marcar valores nas células
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            plt.text(j, i, f"{cm[i, j]:.4f}",
+                     ha="center", va="center")
+
+    plt.xticks([0, 1], ['No Suicidal \nIdeation\n', 'Suicidal \nIdeation\n'])
+    plt.yticks([0, 1], ['No Suicidal \nIdeation', 'Suicidal \nIdeation'])
+    plt.tight_layout()
+    plt.show()
+
+
+# ===============================
+# Avaliação do modelo
+# ===============================
+
+def avaliar_modelo(model, X, X_text, y, nome_conjunto="Teste"):
     print(f"\n Avaliação no conjunto de {nome_conjunto.upper()}:")
     resultados = model.evaluate(X, y, verbose=0)
     print(f"Loss:       {resultados[0]:.4f}")
@@ -254,7 +343,30 @@ def avaliar_modelo(model, X, y, nome_conjunto="Teste"):
 
     # Matriz de confusão
     print(f"\n🔹 Matriz de Confusão - {nome_conjunto}")
-    print(confusion_matrix(y, y_pred))
+    cm = confusion_matrix(y, y_pred, normalize='true')
+    print(cm)
+
+    # Plot da matriz de confusão
+    plotar_matriz_confusao(cm, nome_conjunto)
+
+    # Identificação de FP e FN
+    fp_idx = np.where((y == 0) & (y_pred == 1))[0]
+    fn_idx = np.where((y == 1) & (y_pred == 0))[0]
+
+    print(f"\nFalsos Positivos (FP): {len(fp_idx)}")
+    print(f"Falsos Negativos (FN): {len(fn_idx)}")
+
+    # Exemplos qualitativos de erros
+    def mostrar_exemplos(indices, X_texto, y_real, y_pred, titulo, n=1):
+        print(f"\n📌 Exemplos de {titulo}:")
+        for idx in indices[:n]:
+            print("-" * 60)
+            print("Texto:", X_texto[idx][:300], "...")
+            print("Real:", y_real[idx], "| Previsto:", int(y_pred[idx]))
+
+    mostrar_exemplos(fp_idx, X_text, y, y_pred, "FALSOS POSITIVOS")
+    mostrar_exemplos(fn_idx, X_text, y, y_pred, "FALSOS NEGATIVOS")
+
     print(classification_report(y, y_pred, digits=4))
 
     # F1-score explícito
@@ -262,15 +374,50 @@ def avaliar_modelo(model, X, y, nome_conjunto="Teste"):
     print(f"F1-Score ({nome_conjunto}): {f1:.4f}")
 
 # Chamada para treino, validação e teste
-avaliar_modelo(model, X_train, y_train, "Treinamento")
-avaliar_modelo(model, X_val, y_val, "Validação")
-avaliar_modelo(model, X_test, y_test, "Teste")
+avaliar_modelo(model, X_train, X_text_train, y_train, "Training")
+avaliar_modelo(model, X_val,   X_text_val,   y_val,   "Validation")
+avaliar_modelo(model, X_test,  X_text_test,  y_test,  "Test")
+
+# ===============================
+# Curva ROC
+# ===============================
+y_test_probs = model.predict(X_test).flatten()
+fpr, tpr, _ = roc_curve(y_test, y_test_probs)
+roc_auc = auc(fpr, tpr)
+
+plt.figure(figsize=(7, 4), dpi=300)
+plt.plot(fpr, tpr, label=f'ROC (AUC = {roc_auc:.4f})')
+plt.plot([0, 1], [0, 1], linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC Curve - Test Set')
+plt.legend()
+plt.grid(True, linestyle=':', alpha=0.6)
+plt.tight_layout()
+plt.show()
+
+# ===============================
+# Consolidação do custo computacional x desempenho
+# ===============================
+resultados_experimento = {
+    "uso_stopwords": "Não" ,  # alterar manualmente para "Sim" na outra execução
+    "tempo_treino_segundos": training_time,
+    "memoria_MB": memory_used,
+}
+
+# Métricas no conjunto de teste
+y_test_probs = model.predict(X_test).flatten()
+y_test_pred = np.round(y_test_probs)
+
+resultados_experimento["accuracy"] = np.mean(y_test_pred == y_test)
+resultados_experimento["f1_score"] = f1_score(y_test, y_test_pred)
+
+df_resultados = pd.DataFrame([resultados_experimento])
+print("\n📊 Resumo custo x desempenho:")
+print(df_resultados)
 
 print("====================================")
 print("Fim da Analise usando a RNA")
 print("====================================")
 
-
 # endregion
-
-
