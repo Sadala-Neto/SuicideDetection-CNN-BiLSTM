@@ -19,6 +19,21 @@ A hybrid **CNN + BiLSTM** architecture was used, achieving competitive results.
 
 ---
 
+## 🧠 Methodological Overview
+
+The experimental pipeline implemented in `main.py` includes:
+
+1. Dataset selection and class balancing  
+2. Text preprocessing (cleaning, normalization, optional stopword removal)  
+3. Tokenization and sequence padding  
+4. CNN–BiLSTM model construction  
+5. Training with EarlyStopping and learning rate scheduling  
+6. Quantitative evaluation (Accuracy, Precision, Recall, F1-score)  
+7. Confusion matrix and ROC curve generation  
+8. Computational cost measurement (training time and memory usage)  
+
+---
+
 ## 🛠️ Usage Instructions
 
 ### 1️⃣ Install Dependencies
@@ -57,18 +72,6 @@ Also adjust the sequence length accordingly:
 Execute the script:
 > python main.py
 
-The script will automatically:
-
-  > Train the CNN–BiLSTM model
-
-  > Display training and validation curves
-
-  > Generate the confusion matrix and ROC curve
-
-  > Report Accuracy, Precision, Recall, and F1-score
-
-  > Measure training time and memory usage
-
 ---
 
 ## 📊 Main Results
@@ -90,6 +93,7 @@ Any use in production must undergo an **ethical review** and involve **mental he
 ## 📄 License
 
 This project is licensed under the MIT License.  
+
 
 
 
