@@ -58,11 +58,6 @@ Verify that the dataset path inside main.py matches your folder structure.
 
 ### 4️⃣ Choose Preprocessing Version
 
-⚠️ The experimental design includes two preprocessing configurations:
-> with and without stopword removal.
-
-> To reproduce the results reported in the manuscript, the code must be executed **twice**, once for each configuration.
-
 Inside main.py, you can select whether to use stopwords removal:
 
 > Keep the stopwords removal line active → WITHOUT stopwords
@@ -81,13 +76,17 @@ Open main.py in your IDE and execute the file using the IDE’s Run or Execute b
 
 To obtain the results for both configurations:
 
-Run the code with stopword removal enabled.
+> Run the code with stopword removal enabled.
 
-Adjust the preprocessing settings as described above.
+> Adjust the preprocessing settings as described above.
 
-Run the code again with stopword removal disabled.
+> Run the code again with stopword removal disabled.
 
-Each configuration must be executed independently.
+> Each configuration must be executed independently.
+
+⚠️ To obtain results comparable to those reported in the manuscript, the code should be executed **twice**, once for each configuration.
+
+Although dataset splitting is controlled through fixed random states, neural network training involves stochastic components (e.g., weight initialization, dropout layers, and optimizer dynamics). Therefore, exact numerical replication of the reported metrics is not guaranteed, and small variations are expected.
 
 ---
 
@@ -110,6 +109,7 @@ Any use in production must undergo an **ethical review** and involve **mental he
 ## 📄 License
 
 This project is licensed under the MIT License.  
+
 
 
 
