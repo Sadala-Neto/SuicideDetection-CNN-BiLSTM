@@ -127,7 +127,7 @@ def preprocess_text(text):
     text = re.sub(r'[^\w\s]', '', str(text))
     # Remover múltiplos espaços em branco e espaços nas bordas
     text = ' '.join(text.split())
-    # Remover stop words
+    # Remover stopwords
     # ⚠️ IMPORTANTE:
     # - Mantenha esta linha ativa → versão SEM stopwords
     # - Comente esta linha → versão COM stopwords
@@ -420,4 +420,5 @@ print("Fim da Analise usando a RNA")
 print("====================================")
 
 # endregion
+
 
