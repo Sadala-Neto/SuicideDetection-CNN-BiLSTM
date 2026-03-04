@@ -1,5 +1,5 @@
 # Required Python version
-python==3.11
+python==3.11.13
 
 # Libraries used
 pandas
@@ -15,6 +15,7 @@ keras
 
 # Used for HTML preprocessing and text cleaning
 bs4
+
 
 
 
