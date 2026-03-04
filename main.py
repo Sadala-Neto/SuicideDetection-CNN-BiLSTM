@@ -79,7 +79,7 @@ df_class_0 = df_suicide_data[df_suicide_data['feeling'] == 0]  # non-suicide
 df_class_1 = df_suicide_data[df_suicide_data['feeling'] == 1]  # suicide
 
 # Encontra o tamanho da menor classe para balanceamento
-min_class_size = 10000 #min(len(df_class_0), len(df_class_1))
+min_class_size = min(len(df_class_0), len(df_class_1))
 
 # Reduz o número de amostras das classes para o tamanho da menor
 df_class_0_balanced = df_class_0.sample(n=min_class_size, random_state=42) #n=min_class_size
@@ -420,5 +420,6 @@ print("Fim da Analise usando a RNA")
 print("====================================")
 
 # endregion
+
 
 
