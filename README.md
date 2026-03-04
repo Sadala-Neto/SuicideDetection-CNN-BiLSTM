@@ -38,10 +38,11 @@ The experimental pipeline implemented in `main.py` includes:
 
 ### 1️⃣ Install Dependencies
 
-Make sure all required libraries are installed:
+> Open the project folder in your preferred IDE (VS Code, PyCharm, Spyder).
 
-> bash
-> - pip install -r requirements.txt
+> Then install the required libraries using your environment's package manager (for example, via the integrated terminal or Python interpreter settings):
+
+> Alternatively, you may install the libraries manually through your IDE’s package manager interface.
 
 ### 2️⃣ Download the Dataset
 
@@ -93,6 +94,7 @@ Any use in production must undergo an **ethical review** and involve **mental he
 ## 📄 License
 
 This project is licensed under the MIT License.  
+
 
 
 
