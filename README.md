@@ -70,8 +70,7 @@ Also adjust the sequence length accordingly:
 
 ### 5️⃣ Run the Experiment
 
-Execute the script:
-> python main.py
+Open main.py in your IDE and execute the file using the IDE’s Run or Execute button.
 
 ---
 
@@ -94,6 +93,7 @@ Any use in production must undergo an **ethical review** and involve **mental he
 ## 📄 License
 
 This project is licensed under the MIT License.  
+
 
 
 
