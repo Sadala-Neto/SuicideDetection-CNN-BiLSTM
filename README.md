@@ -77,6 +77,18 @@ Also adjust the sequence length accordingly:
 
 Open main.py in your IDE and execute the file using the IDE’s Run or Execute button.
 
+### 🔁 Experimental Execution Procedure
+
+To obtain the results for both configurations:
+
+Run the code with stopword removal enabled.
+
+Adjust the preprocessing settings as described above.
+
+Run the code again with stopword removal disabled.
+
+Each configuration must be executed independently.
+
 ---
 
 ## 📊 Main Results
@@ -98,6 +110,7 @@ Any use in production must undergo an **ethical review** and involve **mental he
 ## 📄 License
 
 This project is licensed under the MIT License.  
+
 
 
 
