@@ -86,7 +86,7 @@ To obtain the results for both configurations:
 
 ---
 
-### 🔬 Reproducibility Note
+### ⚠️ Reproducibility Note
 
 To obtain results comparable to those reported in the manuscript, the code should be executed **twice**, once for each configuration.
 
@@ -113,6 +113,7 @@ Any use in production must undergo an **ethical review** and involve **mental he
 ## 📄 License
 
 This project is licensed under the MIT License.  
+
 
 
 
